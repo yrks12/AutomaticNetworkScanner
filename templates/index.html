@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatic Network Scanner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            display: inline-block;
+            margin: 0;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #ff6666;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff4d4d;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .form-container {
+            margin-top: 20px;
+            flex: 1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Automatic Network Scanner</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Site Name</th>
+        <th>Masked IP</th>
+        <th>Ports</th>
+        <th>Last Scan Result</th>
+        <th>Last Scan Time</th>
+        <th>Actions</th>
+        <th>Remove</th>
+    </tr>
+    {% for scan in scans %}
+        <tr>
+            <td>{{ scan.id }}</td>
+            <td>{{ scan.site_name }}</td>
+            <td>{{ mask_ip(scan.address) }}</td>
+            <td>{{ scan.ports }}</td>
+            <td>{{ scan.last_scan_result }}</td>
+            <td>{{ scan.last_scan_time }}</td>
+            <td>
+                <a href="{{ url_for('trigger_scan', scan_id=scan.id) }}">Perform Scan</a>
+            </td>
+            <td>
+                <form method="POST" action="{{ url_for('remove_scan', scan_id=scan.id) }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Remove</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<div class="form-container">
+    <!-- Add new scan form -->
+    <form method="POST" action="{{ url_for('add_scan') }}">
+        <label for="address">Address:</label>
+        <input type="text" name="address" required>
+
+        <label for="site_name">Site Name:</label>
+        <input type="text" name="site_name" required>
+
+        <label for="ports">Ports:</label>
+        <input type="text" name="ports" required>
+
+
+        <button type="submit">Add Scan</button>
+    </form>
+    <p>Note: You can enter port ranges like '80-100' or individual ports like '22, 443'</p>
+</div>
+
+<footer>
+    Made by YairTech Ltd
+</footer>
+
+</body>
+</html>
