@@ -48,18 +48,22 @@ def parse_nmap_output(output):
             open_ports.append({'port': port_number, 'type': port_type, 'state': port_state, 'service': port_service})
     return host_info, {'host': host_info, 'ports': open_ports}
 
-
+##   email_addr = "ysgadvisory@gmail.com"
+##    password = "ukzacothgofjotxx"
+# Function to send email
 # Function to send email
 def send_email(site_name, subject, body):
-    email_addr = "y0533127296@gmail.com"
-    password = "rplhgxrbsxndspnj"
+    email_addr = "YOUR_EMAIL"
+    password = "YOUR_PASSWORD"
     msg = f"Subject: Open Ports Found on {site_name} {subject} \n\n{body}."
+
     if body != "Non open ports are found":
         mail = smtplib.SMTP("smtp.gmail.com", 587)
         mail.starttls()
         mail.login(email_addr, password)
-        mail.sendmail(email_addr,"sam@yessecurity.eu", msg)
+        mail.sendmail(email_addr, "sam@yessecurity.eu", msg.encode('utf-8'))  # Encode the message with UTF-8
         mail.quit()
+
 
 
 # make the body for sending the email
@@ -81,12 +85,11 @@ def perform_scan(scan_id):
     result = scan_network(scan.address, scan.ports)
     host, scan_result = parse_nmap_output(result)
     open_ports = email_body(scan_result)
-    send_email(scan.site_name,host, open_ports)
+    send_email(scan.site_name, host, open_ports)
 
     scan.last_scan_result = open_ports
     scan.last_scan_time = datetime.utcnow()
     db.session.commit()
-
 
 
 # Function to schedule the scans
@@ -141,6 +144,7 @@ def trigger_scan(scan_id):
     perform_scan(scan_id)
     return redirect(url_for('home'))
 
+
 # Route for removing a scan
 @app.route('/remove_scan/<int:scan_id>', methods=['POST', 'DELETE'])
 def remove_scan(scan_id):
@@ -151,9 +155,18 @@ def remove_scan(scan_id):
             db.session.commit()
     return redirect(url_for('home'))
 
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+        # Query existing scans from the database
+        existing_scans = Scan.query.all()
+
+        # If there are existing scans, perform scans on them
+        if existing_scans:
+            for scan in existing_scans:
+                perform_scan(scan.id)
 
     # Start the scheduler in a separate thread
     import threading
@@ -162,3 +175,4 @@ if __name__ == '__main__':
     scheduler_thread.start()
 
     app.run(debug=True)
+
