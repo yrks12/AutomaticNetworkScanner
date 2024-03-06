@@ -90,6 +90,7 @@
         <th>Ports</th>
         <th>Last Scan Result</th>
         <th>Last Scan Time</th>
+        <th>Status</th>
         <th>Actions</th>
         <th>Remove</th>
     </tr>
@@ -101,6 +102,8 @@
             <td>{{ scan.ports }}</td>
             <td>{{ scan.last_scan_result }}</td>
             <td>{{ scan.last_scan_time }}</td>
+            <td>{{ scan.status }}</td>
+
             <td>
                 <a href="{{ url_for('trigger_scan', scan_id=scan.id) }}">Perform Scan</a>
             </td>
