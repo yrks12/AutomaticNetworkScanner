@@ -66,7 +66,7 @@ def send_email(site_name, subject, body):
         mail = smtplib.SMTP("smtp.gmail.com", 587)  # Connect to Gmail SMTP server
         mail.starttls()  # Start TLS for security
         mail.login(email_addr, password)  # Log in with email and password
-        mail.sendmail(email_addr, "y0533127296@gmail.com", msg.encode('utf-8'))  # Send the email
+        mail.sendmail(email_addr, "email@example.com", msg.encode('utf-8'))  # Send the email
         mail.quit()  # Close the SMTP connection
 
 # Function to format the email body with open port information
